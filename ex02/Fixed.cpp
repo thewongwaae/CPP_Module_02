@@ -121,20 +121,20 @@ Fixed	Fixed::operator--( int num ) {
 }
 
 const Fixed	&Fixed::min( const Fixed &num1, const Fixed &num2 ) {
-	if (num1 < num2)
-		return (num1);
-	return (num2);
+	if (num1._num < num2._num)
+		return (num1._num);
+	return (num2._num);
 }
 
 const Fixed	&Fixed::max( const Fixed &num1, const Fixed &num2 ) {
-	if (num1 > num2)
-		return (num1);
-	return (num2);
+	if (num1._num > num2._num)
+		return (num1._num);
+	return (num2._num);
 }
 
 
 int Fixed::getRawBits( void ) const {
-	return (this->_num);
+	return (this->_bits);
 }
 
 void Fixed::setRawBits( const int raw ) {
