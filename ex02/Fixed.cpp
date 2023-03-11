@@ -1,30 +1,16 @@
 #include "Fixed.hpp"
 
-static float ft_power( float num, int exp )
-{
-	float	res;
-
-	if (!exp)
-		return (1);
-	if (exp < 0)
-	{
-		num = 1 / num;
-		exp *= -1;
-	}
-	res = num;
-	while (--exp)
-		res *= num;
-	return (res);
-}
-
 const int Fixed::_bits = 8;
 
-/* Constructors and Deconstructors */
 Fixed::Fixed( void ) : _num(0) {}
 
-Fixed::Fixed( const int num ) : _num(num * ft_power(2, this->_bits)) {}
+Fixed::Fixed( const int num ) {
+	_num = num << _bits;
+}
 
-Fixed::Fixed( const float num ) : _num(num * ft_power(2, this->_bits)) {}
+Fixed::Fixed( const float num ) {
+	_num = roundf(num * (1 << _bits));
+}
 
 Fixed::Fixed( const Fixed &copy ) {
 	*this = copy;
@@ -32,104 +18,99 @@ Fixed::Fixed( const Fixed &copy ) {
 
 Fixed::~Fixed( void ) {}
 
-/* Overloaded operators */
+
 Fixed &Fixed::operator=( const Fixed &assign ) {
-	this->_num = assign.getRawBits();
+	if (this != &assign)
+		_num = assign.getRawBits();
 	return *this;
 }
 
-bool &Fixed::operator>( const Fixed &num ) const {
-	bool res = this->toFloat() > num.toFloat();
-	return (res);
+bool	Fixed::operator>(Fixed num) const
+{
+	return (this->toFloat() > num.toFloat());
 }
 
-bool &Fixed::operator<( const Fixed &num ) const {
-	bool res = this->toFloat() < num.toFloat();
-	return (res);
+bool	Fixed::operator<(Fixed num) const
+{
+	return (this->toFloat() < num.toFloat());
 }
 
-bool &Fixed::operator>=( const Fixed &num ) const {
-	bool res = this->toFloat() >= num.toFloat();
-	return (res);
+bool	Fixed::operator>=(Fixed num) const
+{
+	return (this->toFloat() >= num.toFloat());
 }
 
-bool &Fixed::operator<=( const Fixed &num ) const {
-	bool res = this->toFloat() <= num.toFloat();
-	return (res);
+bool	Fixed::operator<=(Fixed num) const
+{
+	return (this->toFloat() <= num.toFloat());
 }
 
-bool &Fixed::operator==( const Fixed &num ) const {
-	bool res = this->toFloat() == num.toFloat();
-	return (res);
+bool	Fixed::operator==(Fixed num) const
+{
+	return (this->toFloat() == num.toFloat());
 }
 
-bool &Fixed::operator!=( const Fixed &num ) const {
-	bool res = this->toFloat() != num.toFloat();
-	return (res);
+bool	Fixed::operator!=(Fixed num) const
+{
+	return (this->toFloat() != num.toFloat());
 }
 
-Fixed	&Fixed::operator+( const Fixed &num ) const {
-	Fixed res = this->toFloat() + num.toFloat();
-	return (res);
+Fixed	Fixed::operator+(Fixed num) const
+{
+	return (this->toFloat() + num.toFloat());
 }
 
-Fixed	&Fixed::operator-( const Fixed &num ) const {
-	Fixed res = this->toFloat() - num.toFloat();
-	return (res);
+Fixed	Fixed::operator-(Fixed num) const
+{
+	return (this->toFloat() - num.toFloat());
 }
 
-Fixed	&Fixed::operator*( const Fixed &num ) const {
-	Fixed res = this->toFloat() * num.toFloat();
-	return (res);
+Fixed	Fixed::operator*(Fixed num) const
+{
+	return (this->toFloat() * num.toFloat());
 }
 
-Fixed	&Fixed::operator/( const Fixed &num ) const {
-	Fixed res = this->toFloat() / num.toFloat();
-	return (res);
+Fixed	Fixed::operator/(Fixed num) const
+{
+	return (this->toFloat() / num.toFloat());
 }
 
-Fixed	&Fixed::operator++(void) {
-	this->setRawBits(this->getRawBits() + 1);
+Fixed	Fixed::operator++()
+{
+	_num++;
 	return (*this);
 }
 
-Fixed	Fixed::operator++( int num ) {
-	Fixed	aux;
-
-	aux = *this;
-
-	if (!num)
-		num = 1;
-	this->setRawBits(this->getRawBits() - num);
-	return (aux);
+Fixed	Fixed::operator++(int)
+{
+	Fixed tmp = *this;
+	++_num;
+	return (tmp);
 }
 
-Fixed	&Fixed::operator--(void) {
-	this->setRawBits(this->getRawBits() + 1);
+Fixed	Fixed::operator--()
+{
+	_num--;
 	return (*this);
 }
 
-Fixed	Fixed::operator--( int num ) {
-	Fixed	aux;
-
-	aux = *this;
-
-	if (!num)
-		num = 1;
-	this->setRawBits(this->getRawBits() - num);
-	return (aux);
+Fixed	Fixed::operator--(int)
+{
+	Fixed tmp = *this;
+	--_num;
+	return (tmp);
 }
 
 const Fixed	&Fixed::min( const Fixed &num1, const Fixed &num2 ) {
-	if (num1._num < num2._num)
-		return (num1._num);
-	return (num2._num);
+	if (num1.toFloat() <= num2.toFloat())
+		return (num1);
+	return (num2);
 }
 
 const Fixed	&Fixed::max( const Fixed &num1, const Fixed &num2 ) {
-	if (num1._num > num2._num)
-		return (num1._num);
-	return (num2._num);
+	if (num1.toFloat() >= num2.toFloat())
+		return (num1);
+	return (num2);
 }
 
 
@@ -142,11 +123,11 @@ void Fixed::setRawBits( const int raw ) {
 }
 
 float Fixed::toFloat( void ) const {
-	return (this->_num * ft_power(2, -this->_bits));
+	return ((float)_num / (float)(1 << _bits));
 }
 
 int Fixed::toInt( void ) const {
-	return (this->_num * ft_power(2, -this->_bits));
+	return (_num >> _bits);
 }
 
 std::ostream &operator<<( std::ostream &str,  const Fixed &nb ) {

@@ -1,6 +1,6 @@
 NAME	= Fixed
 CPP		= c++ -fsanitize=address -fno-omit-frame-pointer
-FLAGS	= -Wall -Wextra -I -std=c++98
+FLAGS	= -Wall -Wextra -Werror -I -std=c++98
 RM		= rm -rf
 
 SRC		= Fixed.cpp main.cpp
