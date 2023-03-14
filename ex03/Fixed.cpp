@@ -2,14 +2,14 @@
 
 const int Fixed::_bits = 8;
 
-Fixed::Fixed( void ) : _num(0) {}
+Fixed::Fixed( void ): _num(0) {}
 
-Fixed::Fixed( const int num ) {
-	_num = num << _bits;
+Fixed::Fixed( const int input ) {
+	this->_num = input << this->_bits;
 }
 
-Fixed::Fixed( const float num ) {
-	_num = roundf(num * (1 << _bits));
+Fixed::Fixed( const float input ) {
+	this->_num = roundf(input * (1 << this->_bits));
 }
 
 Fixed::Fixed( const Fixed &copy ) {
@@ -18,12 +18,12 @@ Fixed::Fixed( const Fixed &copy ) {
 
 Fixed::~Fixed( void ) {}
 
-
-Fixed &Fixed::operator=( const Fixed &assign ) {
-	if (this != &assign)
-		_num = assign.getRawBits();
+Fixed &Fixed::operator=( const Fixed &src ) {
+	if (this != &src)
+		this->_num = src.getRawBits();
 	return *this;
 }
+
 
 bool	Fixed::operator>(Fixed num) const
 {
@@ -115,7 +115,7 @@ const Fixed	&Fixed::max( const Fixed &num1, const Fixed &num2 ) {
 
 
 int Fixed::getRawBits( void ) const {
-	return (this->_bits);
+	return (this->_num);
 }
 
 void Fixed::setRawBits( const int raw ) {
@@ -123,13 +123,16 @@ void Fixed::setRawBits( const int raw ) {
 }
 
 float Fixed::toFloat( void ) const {
-	return ((float)_num / (float)(1 << _bits));
+	return ((float)this->_num / (float)(1 << this->_bits));
 }
 
 int Fixed::toInt( void ) const {
-	return (_num >> _bits);
+	return (this->_num >> this->_bits);
 }
 
-std::ostream &operator<<( std::ostream &str,  const Fixed &nb ) {
-	return (str << nb.toFloat());
+
+std::ostream &operator<<(std::ostream &str, Fixed const &fixed)
+{
+	str << fixed.toFloat();
+	return (str);
 }

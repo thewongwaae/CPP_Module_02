@@ -1,41 +1,28 @@
 #include "Fixed.hpp"
 
-static float ft_power( float num, int exp )
-{
-	float	res;
-
-	if (!exp)
-		return (1);
-	if (exp < 0)
-	{
-		num = 1 / num;
-		exp *= -1;
-	}
-	res = num;
-	while (--exp)
-		res *= num;
-	return (res);
-}
-
 const int Fixed::_bits = 8;
 
+Fixed::Fixed( void ): _num(0) {}
 
-Fixed::Fixed( void ) : _num(0) {}
+Fixed::Fixed( const int input ) {
+	this->_num = input << this->_bits;
+}
 
-Fixed::Fixed( const int num ) : _num(num * ft_power(2, this->_bits)) {}
-
-Fixed::Fixed( const float num ) : _num(num * ft_power(2, this->_bits)) {}
+Fixed::Fixed( const float input ) {
+	this->_num = roundf(input * (1 << this->_bits));
+}
 
 Fixed::Fixed( const Fixed &copy ) {
 	*this = copy;
 }
 
-Fixed &Fixed::operator=( const Fixed &assign ) {
-	this->_num = assign.getRawBits();
+Fixed::~Fixed( void ) {}
+
+Fixed &Fixed::operator=( const Fixed &src ) {
+	if (this != &src)
+		this->_num = src.getRawBits();
 	return *this;
 }
-
-Fixed::~Fixed( void ) {}
 
 
 int Fixed::getRawBits( void ) const {
@@ -47,13 +34,16 @@ void Fixed::setRawBits( const int raw ) {
 }
 
 float Fixed::toFloat( void ) const {
-	return (this->_num * ft_power(2, -this->_bits));
+	return ((float)this->_num / (float)(1 << this->_bits));
 }
 
 int Fixed::toInt( void ) const {
-	return (this->_num * ft_power(2, -this->_bits));
+	return (this->_num >> this->_bits);
 }
 
-std::ostream &operator<<( std::ostream &str,  const Fixed &nb ) {
-	return (str << nb.toFloat());
+
+std::ostream &operator<<(std::ostream &str, Fixed const &fixed)
+{
+	str << fixed.toFloat();
+	return (str);
 }
