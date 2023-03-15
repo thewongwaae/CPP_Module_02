@@ -9,6 +9,11 @@ Fixed::Fixed( const int input ) {
 }
 
 Fixed::Fixed( const float input ) {
+	// explanation eg. case of 42.42f
+	// res 4269, div by 2^8 42.41796875
+	// this->_num = input * (1 << this->_bits);
+	
+	// res 4272, div by 2^8 42.421875
 	this->_num = roundf(input * (1 << this->_bits));
 }
 
